@@ -4,7 +4,7 @@ This program outputs to files rather than the terminal, since the output may not
 the terminal past 1000 lines.
 
 *Note: This program will output to two files with the names 'problem1.txt' and 'problem2.txt'. It's 
-best to run this in its own directory/folder to prevent overwriting any preexisting data.*
+best to run this in its own directory/folder to prevent overwriting any pre-existing data.*
 
 To compile and run:
 ```
@@ -18,8 +18,19 @@ g++ PA1.cpp
 ./a.out
 ```
 
-See the results by opening problem1.txt and problem2.txt for the outputs (respective to the problem number).
+Also optional: pulling the whole directory from github into your root (or working directory if
+you keep student work separate from other items in the Linux server)
 
+```
+git pull https://github.com/stroudafk/CS3360-PA1
+g++ -o run PA1.cpp
+./run
+```
+See the results by opening problem1.txt and problem2.txt for the outputs (respective to the problem number).
+```
+vim problem1.txt
+vim problem2.txt
+```
 
 #### Problem 1 Explanation
 To generate the interarrival times, I used the formula -(1/lambda)(ln(z)),
