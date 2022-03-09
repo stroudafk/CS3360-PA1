@@ -68,5 +68,36 @@ int main(){
     std::cout << std::endl;
   }
 
+  //finding the total system failure
+  i = j = 0;
+  double failureTime = -1;
+  while(i < serverATimes.size() && j < serverBTimes.size()){
+    if(serverATimes[i] <= serverBTimes[j]){
+      if(abs(serverATimes[i] - serverBTimes[j]) < 10.0){
+        failureTime = serverBTimes[j];
+        break;
+      }
+      i++;
+      continue;
+    }
+    else if(serverBTimes[j] <= serverATimes[i]){
+      if(abs(serverBTimes[j] - serverATimes[i]) < 10.0){
+        failureTime = serverATimes[i];
+        break;
+      }
+      j++;
+      continue;
+    }
+  }
+
+
+  if(failureTime == -1){
+    std::cout << "There is no total system failure for this iteration of the simulation." << std::endl;
+  }
+  else{
+  //TODO: consider moving this into the above while and if conditions so you may state which server fails second
+    std::cout << "Total system failure occurs at " << failureTime << " hours." << std::endl;
+  }
+
   return 0;
 }
