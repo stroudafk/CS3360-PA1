@@ -7,12 +7,16 @@ the terminal past 1000 lines.
 best to run this in its own directory/folder to prevent overwriting any preexisting data.*
 
 To compile and run:
-> g++ -o run PA1.cpp
-> ./run
+```
+g++ -o run PA1.cpp
+./run
+```
 
 Or, with no arguments:
-> g++ PA1.cpp
-> ./a.out
+```
+g++ PA1.cpp
+./a.out
+```
 
 See the results by opening problem1.txt and problem2.txt for the outputs (respective to the problem number).
 
