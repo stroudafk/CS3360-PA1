@@ -103,7 +103,7 @@ int main(){
   }
 
   if(failureTime == -1){
-    fout << "There is no total system failure for this iteration of the simulation." << std::endl;
+    fout << "There is no total system failure within 20 years for this iteration of the simulation." << std::endl;
   }
   else{
   //TODO: consider moving this into the above while and if conditions so you may state which server fails second
