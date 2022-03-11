@@ -25,6 +25,9 @@ void problem1(){
   double avgArrival = timeElapsed / 1000;
   fout << "Average service time: " << avgServiceTime << std::endl;
   fout << "Average arrival rate: " << 1/avgArrival << std::endl;
+  
+  std::cout << "Average service time: " << avgServiceTime << std::endl;
+  std::cout << "Average arrival rate: " << 1/avgArrival << std::endl;
  
   //close output file
   fout.close();
@@ -130,6 +133,7 @@ void problem2(){
   }
     
   fout << "\n\nTotal system failure occurs at " << systemFailure << " hours." << std::endl;
+  std::cout << "\n\nTotal system failure occurs at " << systemFailure << " hours." << std::endl;
   
   //close output file
   fout.close();
