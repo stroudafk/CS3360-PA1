@@ -4,24 +4,21 @@
 #include <cmath>
 #include <fstream>
 
-double a(){
-  return double(rand()) / RAND_MAX;
-}
-
-int main(){
-  srand(time(NULL));
+void problem1(){
   double timeElapsed = 0, serviceTime = 0, avgServiceTime = 0, avgArrivalRate = 0;
   double arrivalTime = 0;
 
   std::ofstream fout;
   fout.open("problem1.txt");
 
-  //adapt to be processes per second, not seconds per process
+  fout << "Event\t Arrival\t Service" << std::endl
+       << "     \t  Time\t    Time" << std::endl << std::endl;
+  fout << "--------------------------" << std::endl;
   for(int i = 1; i <= 1000; i++){
-    timeElapsed += -(1.0/2.0) * log(a());
-    serviceTime = -(1.0/1.0) * log(1 - a());
+    timeElapsed += -(1.0/2.0) * log(double(rand()) / RAND_MAX);
+    serviceTime = -(1.0/1.0) * log(1 - double(rand()) / RAND_MAX);
     avgServiceTime += serviceTime;
-    fout << "< " << i << "\t" << timeElapsed << "\t" << serviceTime << " >" << std::endl;
+    fout << "< " << i << "\t" << timeElapsed << "\t" << serviceTime << " >" << std::endl << std::endl;
   }
   // Calculate averages
   avgServiceTime /= 1000;
@@ -31,13 +28,86 @@ int main(){
  
   //close output file
   fout.close();
+}
 
+void generateEvents(std::vector<double>& serverAEvents, std::vector<double>& serverBEvents){
+  //generates + appends 20 years worth of server failure events to the end of the file
+  
+  std::ofstream fout;
+  //writing to output 2 file
+  fout.open("problem2.txt", std::ios::app);
 
+  int twentyYearsInHours= 24 * 365 * 20;
+  double serverFailureA = 0.0;
+  double serverFailureB = 0.0;
+
+  while(serverFailureA <= twentyYearsInHours || serverFailureB <= twentyYearsInHours){
+    serverFailureA += -(500) * log(1 - double(rand()) / RAND_MAX);
+    serverFailureB += -(500) * log(1 - double(rand()) / RAND_MAX);
+
+    if(serverFailureA <= twentyYearsInHours){
+      serverAEvents.push_back(serverFailureA);
+    }
+    if(serverFailureB <= twentyYearsInHours){
+      serverBEvents.push_back(serverFailureB);
+    }
+  }
+
+  int i = 0, j = 0;
+  
+  //TODO: put in separate print function?
+  while(i < serverAEvents.size() || j < serverBEvents.size()){
+    if(i < serverAEvents.size()){
+      fout << serverAEvents[i] << "\t\t\t";
+      fout << serverAEvents[i] + 10 << "\t\t\t";
+    }
+    else{
+      fout << "\t\t\t\t\t\t";
+    }
+    if(j < serverBEvents.size()){
+      fout << serverBEvents[j] << "\t\t\t";
+      fout << serverBEvents[j] + 10 << "\t\t\t";
+    }
+    i++;
+    j++;
+    fout << std::endl;
+  } 
+  //fout.close();
+}
+
+double totalSystemFailure(std::vector<double>& serverAEvents, std::vector<double>& serverBEvents, int i = 0, int j = 0){
+  //finding the total system failure
+  double failureTime = -1;
+
+  //find overlapping restoration times
+  while(i < serverBEvents.size() && j < serverBEvents.size()){
+    if(serverAEvents[i] <= serverBEvents[j]){
+      if(abs(serverAEvents[i] - serverBEvents[j]) < 10.0){
+        failureTime = serverBEvents[j];
+        break;
+      }
+      i++;
+      continue;
+    }
+    else if(serverBEvents[j] <= serverAEvents[i]){
+      if(abs(serverBEvents[j] - serverAEvents[i]) < 10.0){
+        failureTime = serverAEvents[i];
+        break;
+      }
+      j++;
+      continue;
+    }
+  }
+  
+  return failureTime;
+}
+
+void problem2(){
+  std::ofstream fout;
   //writing to output 2 file
   fout.open("problem2.txt");
 
-  int yearInHours = 8760;
-  int MTBF = 500;
+  int twentyYearsInHours= 24 * 365 * 20;
   double serverFailureA = 0.0;
   double serverFailureB = 0.0;
 
@@ -46,72 +116,50 @@ int main(){
   fout << "--------------------------------------------------";
   fout << "--------------------------------------------------" << std::endl;
 
-  std::vector<double> serverATimes;
-  std::vector<double> serverBTimes;
+  std::vector<double> serverAEvents;
+  std::vector<double> serverBEvents;
+  double systemFailure = -1;
+  double averageFailure = 0;
 
-  while(serverFailureA <= 20 * yearInHours || serverFailureB <= 20 * yearInHours){
-    serverFailureA += -(500) * log(1-a());
-    serverFailureB += -(500) * log(1-a());
-
-    if(serverFailureA <= 20 * yearInHours){
-      serverATimes.push_back(serverFailureA);
-    }
-    if(serverFailureB <= 20 * yearInHours){
-      serverBTimes.push_back(serverFailureB);
-    }
+  int k = 1; //sets of 20 years
+  while(systemFailure == -1){
+    int sizeA = serverAEvents.size(), sizeB = serverBEvents.size();
+    generateEvents(serverAEvents, serverBEvents);
+    systemFailure = totalSystemFailure(serverAEvents, serverBEvents, sizeA, sizeB);
+    k++;
   }
+    
+  fout << "\n\nTotal system failure occurs at " << systemFailure << " hours." << std::endl;
   
-  int i = 0, j = 0;
-  while(i < serverATimes.size() || j < serverBTimes.size()){
-    if(i < serverATimes.size()){
-      fout << serverATimes[i] << "\t\t\t";
-      fout << serverATimes[i] + 10 << "\t\t\t";
-    }
-    else{
-      fout << "\t\t\t\t\t\t";
-    }
-    if(j < serverBTimes.size()){
-      fout << serverBTimes[j] << "\t\t\t";
-      fout << serverBTimes[j] + 10 << "\t\t\t";
-    }
-    i++;
-    j++;
-    fout << std::endl;
-  }
-
-
-  
-  //finding the total system failure
-  i = j = 0;
-  double failureTime = -1;
-  while(i < serverATimes.size() && j < serverBTimes.size()){
-    if(serverATimes[i] <= serverBTimes[j]){
-      if(abs(serverATimes[i] - serverBTimes[j]) < 10.0){
-        failureTime = serverBTimes[j];
-        break;
-      }
-      i++;
-      continue;
-    }
-    else if(serverBTimes[j] <= serverATimes[i]){
-      if(abs(serverBTimes[j] - serverATimes[i]) < 10.0){
-        failureTime = serverATimes[i];
-        break;
-      }
-      j++;
-      continue;
-    }
-  }
-
-  if(failureTime == -1){
-    fout << "There is no total system failure within 20 years for this iteration of the simulation." << std::endl;
-  }
-  else{
-  //TODO: consider moving this into the above while and if conditions so you may state which server fails second
-    fout << "Total system failure occurs at " << failureTime << " hours." << std::endl;
-  }
-  //closing second output file
+  //close output file
   fout.close();
+}
 
+int main(int argc, char* argv[]){
+  srand(time(NULL));
+  std::ofstream file1;
+  std::ofstream file2;
+
+  file2.open("problem2.txt");
+
+  if(argc > 1){
+    for(int i = 0; i < std::atoi(argv[1]); i++){
+      //Run a simulation of 1000 processes, and print the average of the arrival rates and service times.
+      problem1();
+  
+      //Run a simulation of 20 years, printing events (failures) and their restoration times
+      //to a 'problem2.txt'. If no total system failure by 20 years, repeat.
+      problem2();
+    }
+  }
+
+  //Run a simulation of 1000 processes, and print the average of the arrival rates and service times.
+  problem1();
+  
+  //Run a simulation of 20 years, printing events (failures) and their restoration times
+  //to a 'problem2.txt'. If no total system failure by 20 years, repeat.
+  problem2();
+
+  file2.close();
   return 0;
 }
