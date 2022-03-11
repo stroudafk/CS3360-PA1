@@ -16,17 +16,18 @@ int main(){
   std::ofstream fout;
   fout.open("problem1.txt");
 
+  //adapt to be processes per second, not seconds per process
   for(int i = 1; i <= 1000; i++){
     timeElapsed += -(1.0/2.0) * log(a());
-    serviceTime = -(1.0/2.0) * log(1 - a());
+    serviceTime = -(1.0/1.0) * log(1 - a());
     avgServiceTime += serviceTime;
     fout << "< " << i << "\t" << timeElapsed << "\t" << serviceTime << " >" << std::endl;
   }
   // Calculate averages
   avgServiceTime /= 1000;
-
+  double avgArrival = timeElapsed / 1000;
   fout << "Average service time: " << avgServiceTime << std::endl;
-  fout << "Average arrival rate: " << timeElapsed / 1000 << std::endl;
+  fout << "Average arrival rate: " << 1/avgArrival << std::endl;
  
   //close output file
   fout.close();
